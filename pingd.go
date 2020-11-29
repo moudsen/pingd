@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+        "time"
 
 	"github.com/takama/daemon"
         "github.com/go-ping/ping"
@@ -54,6 +55,7 @@ func handlePing4Request(w http.ResponseWriter, req *http.Request) {
 		errlog.Println("Error (allocating pinger): ", err)
         } else {
 		pinger.Count = 1
+                pinger.Timeout = 30*time.Second
 		pinger.SetPrivileged(true)
 
 		pinger.Run()
