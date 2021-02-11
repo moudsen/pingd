@@ -11,15 +11,20 @@ import (
 )
 
 func main() {
+    var resp *http.Response
+    var err error
+
     args := os.Args
 
     if len(args)>=2 {
         if len(args)==2 {
-          resp, err := http.Get("http://127.0.0.1:7008/ping4?ip="+url.QueryEscape(args[1]))
+fmt.Printf("Single call\n")
+          resp, err = http.Get("http://127.0.0.1:7008/ping4?ip="+url.QueryEscape(args[1]))
         }
 
         if len(args)>2 {
-          resp, err := http.Get("http://127.0.0.1:7008/ping4?ip="+url.QueryEscape(args[1])+"&timeout="+args[2])
+fmt.Printf("Dual call\n")
+          resp, err = http.Get("http://127.0.0.1:7008/ping4?ip="+url.QueryEscape(args[1])+"&timeout="+args[2])
         }
 
         if err!=nil {
