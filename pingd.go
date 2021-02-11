@@ -76,7 +76,7 @@ func handlePing4Request(w http.ResponseWriter, req *http.Request) {
         }
 
 	fmt.Fprintf(w, "%.5f", result)
-	stdlog.Printf("Ping to %s took %.5f ms",ipv4[0],result)
+	stdlog.Printf("Ping to %s took %.5f ms (timeout %d sec)",ipv4[0],result,timeout)
 }
 
 func (service *Service) Manage() (string, error) {
