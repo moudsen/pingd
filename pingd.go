@@ -143,7 +143,7 @@ func init() {
 func main() {
 	// Create a new daemon process.
 
-	srv, err := daemon.New(name, description)
+	srv, err := daemon.New(name, description, daemon.SystemDaemon)
 
 	// If we failed, report the error and halt.
 
