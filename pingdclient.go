@@ -13,8 +13,14 @@ import (
 func main() {
     args := os.Args
 
-    if len(args)==2 {
-        resp, err := http.Get("http://127.0.0.1:7008/ping4?ip="+url.QueryEscape(args[1]))
+    if len(args)>=2 {
+        if len(args)==2 {
+          resp, err := http.Get("http://127.0.0.1:7008/ping4?ip="+url.QueryEscape(args[1]))
+        }
+
+        if len(args)>2 {
+          resp, err := http.Get("http://127.0.0.1:7008/ping4?ip="+url.QueryEscape(args[1])+"&timeout="+args[2])
+        }
 
         if err!=nil {
             log.Fatal(err)
@@ -31,6 +37,6 @@ func main() {
 
         fmt.Printf("%s\n",lines[0])
     } else {
-        fmt.Println("Usage: pingdclient <ipv4 name/address>")
+        fmt.Println("Usage: pingdclient <ipv4 name/address> <timeout in seconds>")
     }
 }
