@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"syscall"
         "time"
+        "strconv"
 
 	"github.com/takama/daemon"
         "github.com/go-ping/ping"
@@ -30,6 +31,7 @@ func handleIndex(w http.ResponseWriter, req *http.Request) {
 
 func handlePing4Request(w http.ResponseWriter, req *http.Request) {
 	var result float64
+        var timeout int = 10
 
 	// Obtain the ip address from the requestor. As this routine likely sits behind a reverse proxy,
 	// first test for an ip in the header. Only if not there, use the RemoteAddr method.
@@ -45,6 +47,11 @@ func handlePing4Request(w http.ResponseWriter, req *http.Request) {
         // Fetch the request ip address, check it and process accordingly
 
 	ipv4, _ := req.URL.Query()["ip"]
+        strTimeout, ok := req.URL.Query()["timeout"]
+
+        if ok {
+          timeout, _ = strconv.Atoi(strTimeout[0])
+        }
 
         // Perform ping
 
@@ -55,7 +62,7 @@ func handlePing4Request(w http.ResponseWriter, req *http.Request) {
 		errlog.Println("Error (allocating pinger): ", err)
         } else {
 		pinger.Count = 1
-                pinger.Timeout = 5*time.Second
+                pinger.Timeout = time.Duration(timeout)*time.Second
 		pinger.SetPrivileged(true)
 
 		pinger.Run()
