@@ -26,12 +26,13 @@ type Service struct {
 }
 
 func handleIndex(w http.ResponseWriter, req *http.Request) {
-	fmt.Println("use /ping4?ip=<ipv4>&timeout=<seconds>")
+	fmt.Println("use /ping4?ip=<ipv4>&timeout=<seconds>&count=<nrofpings>")
 }
 
 func handlePing4Request(w http.ResponseWriter, req *http.Request) {
 	var result float64
         var timeout int = 10
+        var pcount int = 1
 
 	// Obtain the ip address from the requestor. As this routine likely sits behind a reverse proxy,
 	// first test for an ip in the header. Only if not there, use the RemoteAddr method.
@@ -47,10 +48,17 @@ func handlePing4Request(w http.ResponseWriter, req *http.Request) {
         // Fetch the request ip address, check it and process accordingly
 
 	ipv4, _ := req.URL.Query()["ip"]
+
         strTimeout, ok := req.URL.Query()["timeout"]
 
         if ok {
           timeout, _ = strconv.Atoi(strTimeout[0])
+        }
+
+        strPings, ok := req.URL.Query()["count"]
+
+        if ok {
+          pcount, _ = strconv.Atoi(strPings[0])
         }
 
         // Perform ping
@@ -61,7 +69,7 @@ func handlePing4Request(w http.ResponseWriter, req *http.Request) {
                 result = -3.0
 		errlog.Println("Error (allocating pinger): ", err)
         } else {
-		pinger.Count = 1
+		pinger.Count = pcount
                 pinger.Timeout = time.Duration(timeout)*time.Second
 		pinger.SetPrivileged(true)
 
@@ -143,7 +151,8 @@ func init() {
 func main() {
 	// Create a new daemon process.
 
-	srv, err := daemon.New(name, description, daemon.SystemDaemon)
+	// srv, err := daemon.New(name, description, daemon.SystemDaemon)
+	srv, err := daemon.New(name, description)
 
 	// If we failed, report the error and halt.
 
